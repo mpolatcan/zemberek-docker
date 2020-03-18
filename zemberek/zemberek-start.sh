@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar zemberek-full.jar StartGrpcServer --dataRoot data &
+java -jar /zemberek/zemberek-full.jar StartGrpcServer --dataRoot /zemberek/data &
