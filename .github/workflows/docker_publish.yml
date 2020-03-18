@@ -1,0 +1,26 @@
+name: zemberek-docker
+
+on:
+  push:
+    branches:
+      - master
+
+
+jobs:
+  build-base-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: echo ${{secrets.DOCKER_PASSWORD}} | docker login -u ${{secrets.DOCKER_USERNAME}} --password-stdin
+      - run: docker build -q -t ${{secrets.DOCKER_USERNAME}}/zemberek:base -f base.Dockerfile
+      - run: docker push ${{secrets.DOCKER_USERNAME}}/zemberek:base
+
+  build-server-image:
+    runs-on: ubuntu-latest
+    need: build-base-image
+    steps:
+      - uses: actions/checkout@v1
+      - run: echo ${{secrets.DOCKER_PASSWORD}} | docker login -u ${{secrets.DOCKER_USERNAME}} --password-stdin
+      - run: docker build -q -t ${{secrets.DOCKER_USERNAME}}/zemberek -f server.Dockerfile
+      - run: docker push ${{secrets.DOCKER_USERNAME}}/zemberek
+      - run: docker rm ${{secrets.DOCKER_USERNAME}}/zemberek ${{secrets.DOCKER_USERNAME}}/zemberek:base
